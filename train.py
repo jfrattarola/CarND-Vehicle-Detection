@@ -6,9 +6,15 @@ from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 from sklearn.metrics import classification_report
 from sklearn import svm
 import pickle
+import argparse
 
 if __name__ == '__main__':
-    X_train, y_train, X_test, y_test = extract_data()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--dir', type=str, default='.',
+                        help='directory to read vehicle/non-vehicle image files from')
+    FLAGS, unparsed = parser.parse_known_args()
+
+    X_train, y_train, X_test, y_test = extract_data(FLAGS.dir)
 
     X_scaler = StandardScaler()
     X_scaler.fit(X_train)
