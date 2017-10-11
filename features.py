@@ -20,8 +20,12 @@ def convert_color(image, color_space='YCrCb'):
         return cv2.cvtColor(image, cv2.COLOR_RGB2YCrCb)
     else: return np.copy(img)
 
-def get_hog_features(img, orient, pix_per_cell, cell_per_block, 
-                        vis=False, feature_vec=True):
+def get_hog_features(img, 
+                     orient=16, 
+                     pix_per_cell=8, 
+                     cell_per_block=2, 
+                     vis=False, 
+                     feature_vec=True):
     # Call with two outputs if vis==True
     if vis == True:
         features, hog_image = hog(img, orientations=orient, 
@@ -65,9 +69,10 @@ def extract_features(imgs,
                      hist_bins=64,
                      spatial_feat=True,
                      hist_feat=True,
-                     hog_feat=True):
+                     hog_feat=True,
+                     feature_array=None):
     # Create a list to append feature vectors to
-    features = []
+    features = [] if feature_array is None else feature_array
     # Iterate through the list of images
     for file in imgs:
         file_features = []
@@ -102,6 +107,6 @@ def extract_features(imgs,
     return features
 
 if __name__ == '__main__':
-    images = glob.glob('vehicles/cars1/*.jpeg')
+    images = glob.glob('vehicles/MiddleClose/*.png')
     features = extract_features(images)
     print('features: {}'.format(features[0].shape))
