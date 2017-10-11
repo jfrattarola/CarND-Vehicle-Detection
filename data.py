@@ -2,17 +2,20 @@ from features import extract_features
 import glob, os
 import numpy as np
 from sklearn.utils import shuffle
+import argparse
 
-def extract_data():
+def extract_data(path='.'):
     if os.path.exists('X_train.npy'):
+        print('Loading numpy cache')
         X_train = np.load('X_train.npy')
         y_train = np.load('y_train.npy')
         X_test = np.load('X_test.npy')
         y_test = np.load('y_test.npy')
 
     else:
-        cars = glob.glob('vehicles/**/*.png')
-        non_cars = glob.glob('non-vehicles/**/*.png')
+        print('Loading files from {}/'.format(path))
+        cars = glob.glob('{}/vehicles/**/*.png'.format(path))
+        non_cars = glob.glob('{}/non-vehicles/**/*.png'.format(path))
 
         # Compute features and labels for training data
         car_features = None
@@ -56,4 +59,8 @@ def extract_data():
     return X_train, y_train, X_test, y_test
 
 if __name__ == '__main__':
-    X_train, y_train, X_test, y_test = extract_data()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--dir', type=str, default='.',
+                        help='directory to read vehicle/non-vehicle image files from')
+    FLAGS, unparsed = parser.parse_known_args()
+    X_train, y_train, X_test, y_test = extract_data(FLAGS.dir)
