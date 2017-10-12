@@ -6,7 +6,7 @@ import pickle
 import cv2
 from scipy.ndimage.measurements import label
 from sliding import find_cars
-from heat_map import *
+from heat import *
 import glob
 import sys
 
