@@ -2,11 +2,17 @@ from parameters import *
 import matplotlib.image as mpimg
 import numpy as np
 from features import convert_color, get_hog_features
+import argparse
 
 if __name__ == '__main__':
-    car_img = mpimg.imread('vehicles/MiddleClose/image0000.png')
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--dir', type=str, default='.',
+                        help='directory to read vehicle/non-vehicle image files from')
+    FLAGS, unparsed = parser.parse_known_args()
+
+    car_img = mpimg.imread('{}/vehicles/MiddleClose/image0000.png'.format(FLAGS.dir))
     cvt_car_img = convert_color(car_img, COLOR_SPACE)
-    non_car_img = mpimg.imread('non-vehicles/MiddleClose/image0000.png')
+    non_car_img = mpimg.imread('{}/non-vehicles/MiddleClose/image0000.png'.format(FLAGS.dir))
     cvt_noncar_img = convert_color(non_car_img, COLOR_SPACE)
 
     ch1_car = car_img[:, :, 0]
@@ -30,9 +36,9 @@ if __name__ == '__main__':
     mpimg.imsave('output_images/car_hog_ch1.png', car_hog_image1, cmap='gray')
     mpimg.imsave('output_images/car_hog_ch2.png', car_hog_image2, cmap='gray')
     mpimg.imsave('output_images/car_hog_ch3.png', car_hog_image3, cmap='gray')
-    mpimg.imsave('output_images/car.png', cvt_car_img)
+    mpimg.imsave('output_images/car.png', ch1_car)
 
     mpimg.imsave('output_images/noncar_hog_ch1.png', non_car_hog_image1, cmap='gray')
     mpimg.imsave('output_images/noncar_hog_ch2.png', non_car_hog_image2, cmap='gray')
     mpimg.imsave('output_images/noncar_hog_ch3.png', non_car_hog_image3, cmap='gray')
-    mpimg.imsave('output_images/noncar.png', cvt_noncar_img)
+    mpimg.imsave('output_images/noncar.png', ch1_noncar)
