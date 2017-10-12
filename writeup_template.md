@@ -11,10 +11,12 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 [car]: ./output_images/car.png
+[car_yuv]: ./output_images/car_yuv.png
 [car_hog_ch1]: ./output_images/car_hog_ch1.png
 [car_hog_ch2]: ./output_images/car_hog_ch2.png
 [car_hog_ch3]: ./output_images/car_hog_ch3.png
 [noncar]: ./output_images/noncar.png
+[noncar_yuv]: ./output_images/noncar_yuv.png
 [noncar_hog_ch1]: ./output_images/noncar_hog_ch1.png
 [noncar_hog_ch2]: ./output_images/noncar_hog_ch2.png
 [noncar_hog_ch3]: ./output_images/noncar_hog_ch3.png
