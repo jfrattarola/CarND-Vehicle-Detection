@@ -5,7 +5,7 @@ import cv2
 from features import get_hog_features, bin_spatial, color_hist, convert_color
 import glob
 
-
+# Define a single function that can extract features using hog sub-sampling and make predictions
 def find_cars(img, ystart, ystop, scales, clf, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins):
 
     draw_img = np.copy(img)
@@ -61,8 +61,8 @@ def find_cars(img, ystart, ystop, scales, clf, X_scaler, orient, pix_per_cell, c
 
 
                 # Get color features
-                spatial_features = bin_spatial(subimg)
-                hist_features = color_hist(subimg)
+                spatial_features = bin_spatial(subimg, size=spatial_size)
+                hist_features = color_hist(subimg, nbins=hist_bins)
 
                 # Scale features and make a prediction
                 test_features = X_scaler.transform(np.hstack((spatial_features, hist_features, hog_features)).reshape(1, -1))
@@ -84,6 +84,12 @@ def find_cars(img, ystart, ystop, scales, clf, X_scaler, orient, pix_per_cell, c
 if __name__ == '__main__':
 
     # Hyperparams
+    orient = 9
+    pix_per_cell = 8
+    cell_per_block = 2
+    spatial_size = (16, 16)
+    hist_bins=32
+
     ystart = 400
     ystop = 656
     scales = [1., 1.5, 2.5]
