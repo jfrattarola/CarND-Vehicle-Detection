@@ -13,7 +13,7 @@ def find_cars(img, ystart, ystop, scales, clf, X_scaler, orient, pix_per_cell, c
 
     img_tosearch = img[ystart:ystop,:,:]
     ctrans_tosearch = convert_color(img_tosearch)
-    ctrans_tosearch = img_tosearch
+#    ctrans_tosearch = img_tosearch
     counter = 0
     for scale_idx, scale in enumerate(scales):
         if scale != 1:
@@ -84,11 +84,11 @@ def find_cars(img, ystart, ystop, scales, clf, X_scaler, orient, pix_per_cell, c
 if __name__ == '__main__':
 
     # Hyperparams
-    orient = 9
+    orient = 16
     pix_per_cell = 8
     cell_per_block = 2
-    spatial_size = (16, 16)
-    hist_bins=32
+    spatial_size = (8, 8)
+    hist_bins=64
 
     ystart = 400
     ystop = 656
