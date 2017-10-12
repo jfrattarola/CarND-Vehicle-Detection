@@ -90,5 +90,5 @@ if __name__ == '__main__':
     for idx, image in enumerate(test_images):
         print('Looking for cars in test image: test_images/test{}.jpg'.format(idx+1))
         img = mpimg.imread(image)
-        out_img, _ = find_cars(img, YSTART, YSTOP, SCALES, clf, X_scaler, orient, PIX_PER_CELL, CELL_PER_BLOCK, SPATIAL_SIZE, HIST_BINS)
+        out_img, _ = find_cars(img, YSTART, YSTOP, SCALES, clf, X_scaler, ORIENT, PIX_PER_CELL, CELL_PER_BLOCK, SPATIAL_SIZE, HIST_BINS)
         mpimg.imsave('output_images/test{}_sliding_window_test.png'.format(idx+1), out_img)
