@@ -1,3 +1,4 @@
+from parameters import *
 from moviepy.editor import VideoFileClip
 from moviepy.editor import ImageSequenceClip
 import matplotlib.image as mpimg
@@ -21,26 +22,10 @@ def progress(count, total, suffix=''):
     sys.stdout.flush()
 
 if __name__ == '__main__':
-    """
-    PARAMETERS, UTILS AND PATHS
-    """
     clip = VideoFileClip("project_video.mp4")
     frames = int(clip.fps * clip.duration)
     image_folder = "frames/"
     video_file = 'processed_video.mp4'
-
-    # Hyperparams
-    orient = 16
-    pix_per_cell = 8
-    cell_per_block = 2
-    spatial_size = (8,8)
-    hist_bins=64
-
-    ystart = 400
-    ystop = 650
-    scales = [1.0, 1.3, 1.7]
-
-    THRESHOLD = 5
 
     # load classifier
     print('Loading Classifier')
@@ -54,8 +39,7 @@ if __name__ == '__main__':
     print('Processing video...')
     for idx, img in enumerate(clip.iter_frames()):
         progress(idx+1, frames)
-
-        _, box_list = find_cars(img, ystart, ystop, scales, clf, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins)
+        _, box_list = find_cars(img, YSTART, YSTOP, SCALES, clf, X_scaler, orient, PIX_PER_CELL, CELL_PER_BLOCK, SPATIAL_SIZE, HIST_BINS)
 
         if idx == 0:
             heat = np.zeros_like(img[:,:,0]).astype(np.float)

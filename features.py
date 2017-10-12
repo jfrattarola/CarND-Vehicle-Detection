@@ -6,8 +6,9 @@ import matplotlib.image as mpimg
 from skimage.feature import hog
 from sklearn.preprocessing import StandardScaler
 import glob
+from parameters import *
 
-def convert_color(image, color_space='YCrCb'):
+def convert_color(image, color_space=COLOR_SPACE):
     if color_space == 'HSV':
         return cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
     elif color_space == 'LUV':
@@ -21,10 +22,10 @@ def convert_color(image, color_space='YCrCb'):
     else: return np.copy(img)
 
 def get_hog_features(img, 
-                     orient=16, 
-                     pix_per_cell=8, 
-                     cell_per_block=2, 
-                     vis=False, 
+                     orient=ORIENT, 
+                     pix_per_cell=PIX_PER_CELL, 
+                     cell_per_block=CELL_PER_BLOCK, 
+                     vis=True, 
                      feature_vec=True):
     # Call with two outputs if vis==True
     if vis == True:
@@ -43,13 +44,13 @@ def get_hog_features(img,
                        visualise=vis, feature_vector=feature_vec)
         return features
 
-def bin_spatial(img, size=(8, 8)):
+def bin_spatial(img, size=SPATIAL_SIZE):
     color1 = cv2.resize(img[:,:,0], size).ravel()
     color2 = cv2.resize(img[:,:,1], size).ravel()
     color3 = cv2.resize(img[:,:,2], size).ravel()
     return np.hstack((color1, color2, color3))
                         
-def color_hist(img, nbins=64):    #bins_range=(0, 256)
+def color_hist(img, nbins=HIST_BINS):    #bins_range=(0, 256)
     # Compute the histogram of the color channels separately
     channel1_hist = np.histogram(img[:,:,0], bins=nbins)
     channel2_hist = np.histogram(img[:,:,1], bins=nbins)
@@ -60,19 +61,18 @@ def color_hist(img, nbins=64):    #bins_range=(0, 256)
     return hist_features
 
 def extract_features(imgs,
-                     color_space='YCrCb',
-                     orient=16,
-                     pix_per_cell=8,
-                     cell_per_block=2,
-                     hog_channel='ALL',
-                     spatial_size=8,
-                     hist_bins=64,
+                     color_space=COLOR_SPACE,
+                     orient=ORIENT,
+                     pix_per_cell=PIX_PER_CELL,
+                     cell_per_block=CELL_PER_BLOCK,
+                     hog_channel=HOG_CHANNEL,
+                     spatial_size=SPATIAL_SIZE,
+                     hist_bins=HIST_BINS,
                      spatial_feat=True,
                      hist_feat=True,
-                     hog_feat=True,
-                     feature_array=None):
+                     hog_feat=True):
     # Create a list to append feature vectors to
-    features = [] if feature_array is None else feature_array
+    features = [] 
     # Iterate through the list of images
     for file in imgs:
         file_features = []
@@ -82,7 +82,7 @@ def extract_features(imgs,
         feature_image = convert_color(image, color_space)
 
         if spatial_feat == True:
-            spatial_features = bin_spatial(feature_image, size=(spatial_size,spatial_size))
+            spatial_features = bin_spatial(feature_image, size=spatial_size)
             file_features.append(spatial_features)
         if hist_feat == True:
             # Apply color_hist()
@@ -95,11 +95,11 @@ def extract_features(imgs,
                 for channel in range(feature_image.shape[2]):
                     hog_features.append(get_hog_features(feature_image[:,:,channel], 
                                         orient, pix_per_cell, cell_per_block, 
-                                        vis=False, feature_vec=True))
+                                        feature_vec=False))
                 hog_features = np.ravel(hog_features)        
             else:
                 hog_features = get_hog_features(feature_image[:,:,hog_channel], orient, 
-                            pix_per_cell, cell_per_block, vis=False, feature_vec=True)
+                            pix_per_cell, cell_per_block, feature_vec=False).ravel()
             # Append the new feature vector to the features list
             file_features.append(hog_features)
         features.append(np.concatenate(file_features))

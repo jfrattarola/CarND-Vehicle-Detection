@@ -1,3 +1,4 @@
+from parameters import *
 from features import extract_features
 import glob, os
 import numpy as np

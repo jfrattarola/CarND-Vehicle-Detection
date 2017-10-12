@@ -1,3 +1,4 @@
+from parameters import *
 import matplotlib.image as mpimg
 import numpy as np
 import pickle
@@ -13,9 +14,6 @@ def find_cars(img, ystart, ystop, scales, clf, X_scaler, orient, pix_per_cell, c
 
     img_tosearch = img[ystart:ystop,:,:]
     ctrans_tosearch = convert_color(img_tosearch)
-    # mpimg.imsave('output_images/img_tosearch.png', img_tosearch)
-
-    # ctrans_tosearch = img_tosearch
     counter = 0
     box_list = []
     for scale_idx, scale in enumerate(scales):
@@ -23,8 +21,6 @@ def find_cars(img, ystart, ystop, scales, clf, X_scaler, orient, pix_per_cell, c
             imshape = ctrans_tosearch.shape
             ctrans_tosearch = cv2.resize(ctrans_tosearch, (np.int(imshape[1]/scale), np.int(imshape[0]/scale)))
         ch1 = ctrans_tosearch[:,:,0]
-        ch2 = ctrans_tosearch[:,:,1]
-        ch3 = ctrans_tosearch[:,:,2]
 
         # Define blocks and steps as above
         nxblocks = (ch1.shape[1] // pix_per_cell) - cell_per_block + 1
@@ -40,8 +36,6 @@ def find_cars(img, ystart, ystop, scales, clf, X_scaler, orient, pix_per_cell, c
 
         # Compute individual channel HOG features for the entire image
         hog1 = get_hog_features(ch1, orient, pix_per_cell, cell_per_block, feature_vec=False)
-        hog2 = get_hog_features(ch2, orient, pix_per_cell, cell_per_block, feature_vec=False)
-        hog3 = get_hog_features(ch3, orient, pix_per_cell, cell_per_block, feature_vec=False)
 
         for xb in range(nxsteps):
             for yb in range(nysteps):
@@ -49,10 +43,7 @@ def find_cars(img, ystart, ystop, scales, clf, X_scaler, orient, pix_per_cell, c
                 ypos = yb*cells_per_step
                 xpos = xb*cells_per_step
                 # Extract HOG for this patch
-                hog_feat1 = hog1[ypos:ypos+nblocks_per_window, xpos:xpos+nblocks_per_window].ravel()
-                hog_feat2 = hog2[ypos:ypos+nblocks_per_window, xpos:xpos+nblocks_per_window].ravel()
-                hog_feat3 = hog3[ypos:ypos+nblocks_per_window, xpos:xpos+nblocks_per_window].ravel()
-                hog_features = np.hstack((hog_feat1, hog_feat2, hog_feat3))
+                hog_features = hog1[ypos:ypos+nblocks_per_window, xpos:xpos+nblocks_per_window].ravel()
 
                 xleft = xpos*pix_per_cell
                 ytop = ypos*pix_per_cell
@@ -86,17 +77,6 @@ def find_cars(img, ystart, ystop, scales, clf, X_scaler, orient, pix_per_cell, c
 
 if __name__ == '__main__':
 
-    # Hyperparams
-    orient = 16
-    pix_per_cell = 8
-    cell_per_block = 2
-    spatial_size = (8, 8)
-    hist_bins=64
-
-    ystart = 400
-    ystop = 650
-    scales = [1.0, 1.3, 1.7]
-
     # load classifier
     print('Loading Classifier')
     with open('clf.pkl', 'rb') as fid:
@@ -110,5 +90,5 @@ if __name__ == '__main__':
     for idx, image in enumerate(test_images):
         print('Looking for cars in test image: test_images/test{}.jpg'.format(idx+1))
         img = mpimg.imread(image)
-        out_img, _ = find_cars(img, ystart, ystop, scales, clf, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins)
+        out_img, _ = find_cars(img, YSTART, YSTOP, SCALES, clf, X_scaler, orient, PIX_PER_CELL, CELL_PER_BLOCK, SPATIAL_SIZE, HIST_BINS)
         mpimg.imsave('output_images/test{}_sliding_window_test.png'.format(idx+1), out_img)

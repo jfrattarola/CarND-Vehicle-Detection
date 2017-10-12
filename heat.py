@@ -1,3 +1,4 @@
+from parameters import *
 import matplotlib.image as mpimg
 import numpy as np
 import pickle
@@ -49,18 +50,6 @@ def draw_labeled_bboxes(img, labels):
     return img
 
 if __name__ == '__main__':
-
-    # Hyperparams
-    orient = 16
-    pix_per_cell = 8
-    cell_per_block = 2
-    spatial_size = (8, 8)
-    hist_bins=64
-
-    ystart = 400
-    ystop = 650
-    scales = [1.0, 1.3, 1.7]
-
     # load classifier
     print('Loading Classifier')
     with open('clf.pkl', 'rb') as fid:
@@ -74,7 +63,7 @@ if __name__ == '__main__':
     for idx, image in enumerate(test_images):
         print('Looking for cars in test image: test_images/test{}.jpg'.format(idx+1))
         img = mpimg.imread(image)
-        _, box_list = find_cars(img, ystart, ystop, scales, clf, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins)
+        _, box_list = find_cars(img, YSTART, YSTOP, SCALES, clf, X_scaler, ORIENT, PIX_PER_CELL, CELL_PER_BLOCK, SPATIAL_SIZE, HIST_BINS)
 
         heat = np.zeros_like(img[:,:,0]).astype(np.float)
         # Add heat to each box in box list
