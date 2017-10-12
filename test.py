@@ -1,9 +1,10 @@
 import pickle
 import matplotlib.image as mpimg
 from features import extract_features
-from training_data import extract_data
+from data import extract_data
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import classification_report
+import argparse
 
 if __name__ == '__main__':
     with open('clf.pkl', 'rb') as fid:
@@ -11,8 +12,15 @@ if __name__ == '__main__':
     with open('scaler.pkl', 'rb') as fid:
         X_scaler = pickle.load(fid)
 
-    features_car = get_features('vehicles/Far/image0004.png')
-    features_noncar = get_features('non-vehicles/MiddleClose/image0001.png')
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--car', type=str, default='image0004.png',
+                        help='car image')
+    parser.add_argument('--non', type=str, default='image0001.png',
+                        help='non-car image')
+    FLAGS, unparsed = parser.parse_known_args()
+
+    features_car = extract_features([FLAGS.car])
+    features_noncar = extract_features([FLAGS.non])
 
     features_car_scaled = X_scaler.transform(features_car)
     features_noncar_scaled = X_scaler.transform(features_noncar)
@@ -26,7 +34,7 @@ if __name__ == '__main__':
         print('Correct prediction of Non-Car')
     else: print('Incorrect prediction of Non-Car')
 
-    X_train, y_train, X_test, y_test = get_data()
+    X_train, y_train, X_test, y_test = extract_data()
     scaled_X_test = X_scaler.transform(X_test)
     predictions = clf.predict(scaled_X_test)
     print('Accuracy on Test Set: {:.2f}%'.format(accuracy_score(y_test, predictions)))
