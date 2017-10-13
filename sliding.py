@@ -7,13 +7,13 @@ from features import get_hog_features, bin_spatial, color_hist, convert_color
 import glob
 
 # Define a single function that can extract features using hog sub-sampling and make predictions
-def find_cars(img, ystart, ystop, scales, clf, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins):
+def find_cars(img, ystart, ystop, scales, clf, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins, color_space):
 
     draw_img = np.copy(img)
     img = img.astype(np.float32)/255
 
     img_tosearch = img[ystart:ystop,:,:]
-    ctrans_tosearch = convert_color(img_tosearch)
+    ctrans_tosearch = convert_color(img_tosearch, color_space)
     counter = 0
     box_list = []
     for scale_idx, scale in enumerate(scales):
@@ -50,8 +50,6 @@ def find_cars(img, ystart, ystop, scales, clf, X_scaler, orient, pix_per_cell, c
 
                 # Extract the image patch
                 subimg = cv2.resize(ctrans_tosearch[ytop:ytop+window, xleft:xleft+window], (64,64))
-                # mpimg.imsave('output_images/subimg{}.png'.format(counter), subimg)
-
 
                 # Get color features
                 spatial_features = bin_spatial(subimg, size=spatial_size)
@@ -90,5 +88,5 @@ if __name__ == '__main__':
     for idx, image in enumerate(test_images):
         print('Looking for cars in test image: test_images/test{}.jpg'.format(idx+1))
         img = mpimg.imread(image)
-        out_img, _ = find_cars(img, YSTART, YSTOP, SCALES, clf, X_scaler, ORIENT, PIX_PER_CELL, CELL_PER_BLOCK, SPATIAL_SIZE, HIST_BINS)
+        out_img, _ = find_cars(img, YSTART, YSTOP, SCALES, clf, X_scaler, ORIENT, PIX_PER_CELL, CELL_PER_BLOCK, SPATIAL_SIZE, HIST_BINS, COLOR_SPACE)
         mpimg.imsave('output_images/test{}_sliding_window_test.png'.format(idx+1), out_img)

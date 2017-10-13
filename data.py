@@ -33,10 +33,9 @@ def extract_data(path='.'):
 
         car_features = np.asarray(car_features)
         non_car_features = np.asarray(non_car_features)
-#        y = np.asarray(y)
+
         X = np.squeeze(np.concatenate((car_features, non_car_features)))
 
-        print(len(y), len(X))
         # Shuffle features and labels in a consistent way
         X, y = shuffle(X, y)
 

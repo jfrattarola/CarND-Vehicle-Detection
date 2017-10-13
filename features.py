@@ -22,28 +22,13 @@ def convert_color(image, color_space=COLOR_SPACE):
         return cv2.cvtColor(image, cv2.COLOR_RGB2YCrCb)
     else: return np.copy(img)
 
-def get_hog_features(img, 
-                     orient=ORIENT, 
-                     pix_per_cell=PIX_PER_CELL, 
-                     cell_per_block=CELL_PER_BLOCK, 
-                     vis=False, 
-                     feature_vec=False):
-    # Call with two outputs if vis==True
+def get_hog_features(img, orient, pix_per_cell, cell_per_block, vis=False,  feature_vec=True):
+    features, hog_image = hog(img, orientations=orient, pixels_per_cell=(pix_per_cell, pix_per_cell),
+                              cells_per_block=(cell_per_block, cell_per_block), transform_sqrt=False,
+                              visualise=True, feature_vector=False)
     if vis == True:
-        features, hog_image = hog(img, orientations=orient, 
-                                  pixels_per_cell=(pix_per_cell, pix_per_cell),
-                                  cells_per_block=(cell_per_block, cell_per_block), 
-                                  transform_sqrt=False, 
-                                  visualise=True, feature_vector=feature_vec)
         return features, hog_image
-    # Otherwise call with one output
-    else:      
-        features = hog(img, orientations=orient, 
-                       pixels_per_cell=(pix_per_cell, pix_per_cell),
-                       cells_per_block=(cell_per_block, cell_per_block), 
-                       transform_sqrt=False, 
-                       visualise=False, feature_vector=feature_vec)
-        return features
+    return features
 
 def bin_spatial(img, size=SPATIAL_SIZE):
     color1 = cv2.resize(img[:,:,0], size).ravel()
@@ -68,10 +53,7 @@ def extract_features(imgs,
                      cell_per_block=CELL_PER_BLOCK,
                      hog_channel=HOG_CHANNEL,
                      spatial_size=SPATIAL_SIZE,
-                     hist_bins=HIST_BINS,
-                     spatial_feat=True,
-                     hist_feat=True,
-                     hog_feat=True):
+                     hist_bins=HIST_BINS):
     # Create a list to append feature vectors to
     features = [] 
     # Iterate through the list of images
@@ -81,29 +63,20 @@ def extract_features(imgs,
         image = mpimg.imread(file)
         # apply color conversion if other than 'RGB'
         feature_image = convert_color(image, color_space)
+        feature_ch = feature_image[:,:,0]
+        
+        #spatial features
+        spatial_features = bin_spatial(feature_image, size=spatial_size)
 
-        if spatial_feat == True:
-            spatial_features = bin_spatial(feature_image, size=spatial_size)
-            file_features.append(spatial_features)
-        if hist_feat == True:
-            # Apply color_hist()
-            hist_features = color_hist(feature_image, nbins=hist_bins)
-            file_features.append(hist_features)
-        if hog_feat == True:
+        # Apply color_hist()
+        hist_features = color_hist(feature_image, nbins=hist_bins)
+
         # Call get_hog_features() with vis=False, feature_vec=True
-            if hog_channel == 'ALL':
-                hog_features = []
-                for channel in range(feature_image.shape[2]):
-                    hog_features.append(get_hog_features(feature_image[:,:,channel], 
-                                        orient, pix_per_cell, cell_per_block, 
-                                        feature_vec=False))
-                hog_features = np.ravel(hog_features)        
-            else:
-                hog_features = get_hog_features(feature_image[:,:,hog_channel], orient, 
-                            pix_per_cell, cell_per_block, feature_vec=False).ravel()
-            # Append the new feature vector to the features list
-            file_features.append(hog_features)
-        features.append(np.concatenate(file_features))
+        hog_features = get_hog_features(feature_ch, orient, pix_per_cell, cell_per_block, feature_vec=False).ravel()
+
+        # Append the new feature vector to the features list
+        
+        features.append(np.hstack((spatial_features, hist_features, hog_features)).reshape(1, -1))
     # Return list of feature vectors
     return features
 
@@ -113,6 +86,6 @@ if __name__ == '__main__':
                         help='directory to read vehicle/non-vehicle image files from')
     FLAGS, unparsed = parser.parse_known_args()
 
-    images = glob.glob('{}/vehicles/MiddleClose/*.png'.format(FLAGS.dir))
+    images = glob.glob('{}/vehicles/MiddleClose/image000*.png'.format(FLAGS.dir))
     features = extract_features(images)
     print('features: {}'.format(features[0].shape))

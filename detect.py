@@ -39,7 +39,7 @@ if __name__ == '__main__':
     print('Processing video...')
     for idx, img in enumerate(clip.iter_frames()):
         progress(idx+1, frames)
-        _, box_list = find_cars(img, YSTART, YSTOP, SCALES, clf, X_scaler, orient, PIX_PER_CELL, CELL_PER_BLOCK, SPATIAL_SIZE, HIST_BINS)
+        _, box_list = find_cars(img, YSTART, YSTOP, SCALES, clf, X_scaler, orient, PIX_PER_CELL, CELL_PER_BLOCK, SPATIAL_SIZE, HIST_BINS, COLOR_SPACE)
 
         if idx == 0:
             heat = np.zeros_like(img[:,:,0]).astype(np.float)
