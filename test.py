@@ -39,3 +39,5 @@ if __name__ == '__main__':
     predictions = clf.predict(scaled_X_test)
     print('Accuracy on Test Set: {:.2f}%'.format(accuracy_score(y_test, predictions)))
 
+    print("\nDetailed classification report:")
+    print(classification_report(y_test, predictions))
