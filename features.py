@@ -20,7 +20,7 @@ def convert_color(image, color_space=COLOR_SPACE):
         return cv2.cvtColor(image, cv2.COLOR_RGB2YUV)
     elif color_space == 'YCrCb':
         return cv2.cvtColor(image, cv2.COLOR_RGB2YCrCb)
-    else: return np.copy(img)
+    else: return np.copy(image)
 
 def get_color_channel( image, color_space=COLOR_SPACE, channel=2 ):
     cvt = convert_color(image, color_space)
@@ -82,6 +82,8 @@ def extract_features_img(img,
 
     if hog_feat is True:
         if color_space == 'GRAY' or color_space == 'GREY':
+            if len(feature_img.shape) == 3:
+                feature_img = cv2.cvtColor(feature_img, cv2.COLOR_RGB2GRAY)
             hog_features = get_hog_features(feature_img, orient, pix_per_cell, cell_per_block, vis=False, feature_vec=True)
         elif hog_channel == 'ALL':
             for channel in range(feature_img.shape[2]):
@@ -107,9 +109,9 @@ def extract_features_imgs(imgs,
     # Create a list to append feature vectors to
     features = [] 
     # Iterate through the list of images
-    for file in imgs:
+    for f in imgs:
         # Read in each one by one
-        image = mpimg.imread(file)
+        image = mpimg.imread(f)
         file_features = extract_features_img(image, color_space, orient, pix_per_cell, cell_per_block, hog_channel, spatial_size, hist_bins, spatial_feat, hist_feat, hog_feat)
         features.append(file_features)
     # Return list of feature vectors
@@ -122,5 +124,5 @@ if __name__ == '__main__':
     FLAGS, unparsed = parser.parse_known_args()
 
     images = glob.glob('{}/vehicles/**/image000*.png'.format(FLAGS.dir))
-    features = extract_features(images)
+    features = extract_features_imgs(images)
     print('features: {}'.format(features[0].shape))

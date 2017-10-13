@@ -3,6 +3,7 @@ from features import extract_features_imgs
 import glob, os
 import numpy as np
 from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
 import pickle
 import argparse
 
