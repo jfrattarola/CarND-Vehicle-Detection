@@ -13,8 +13,8 @@ def search( img, windows, clf, X_scaler, color_space=COLOR_SPACE,
             spatial_size=SPATIAL_SIZE, hist_bins=HIST_BINS, 
             hist_range=BINS_RANGE, orient=ORIENT, 
             pix_per_cell=PIX_PER_CELL, cell_per_block=CELL_PER_BLOCK, 
-            hog_channel=HOG_CHANNEL, spatial_feat=True, 
-            hist_feat=True, hog_feat=True):
+            hog_channel=HOG_CHANNEL, spatial_feat=SPATIAL_FEAT, 
+            hist_feat=HIST_FEAT, hog_feat=HOG_FEAT):
     positives=[]
     for window in windows:
         img_tosearch = cv2.resize(img[window[0][1]:window[1][1], window[0][0]:window[1][0]], 
