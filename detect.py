@@ -6,7 +6,7 @@ import numpy as np
 import pickle
 import cv2
 from scipy.ndimage.measurements import label
-from sliding import find_cars
+from heat import *
 import glob
 import sys
 import argparse
@@ -27,8 +27,8 @@ class BoxQueue ():
         self.bboxes = []
 
     def put(self, bboxes):
-        if (len(self.boxes) > self.maxlen):
-            self.boxes.pop(0)
+        if (len(self.bboxes) > self.maxlen):
+            self.bboxes.pop(0)
         self.bboxes.append(bboxes)
         
     def get(self):
@@ -36,20 +36,17 @@ class BoxQueue ():
         for bboxes in self.bboxes:
             res.extend(bboxes)
         return res
-
-queue = BoxQueue(NUM_FRAMES)
     
-def process_image (image):
+def process_image (image, queue, settings, num, clf, X_scaler):
     
     res = np.copy (image)
-    res = res.astype(np.float32)/255
     
-    bboxes, image_bboxes = get_bboxes (image)
+    bboxes, image_bboxes = get_bboxes (image, settings, num, clf, X_scaler)
     queue.put(bboxes)
     bboxes = queue.get()
     
     final_boxes = get_final_boxes (bboxes, NUM_FRAMES*2)
-    res = 255 * draw_boxes(res, final_boxes, color=DEFAULT_BOX_COLOR, thickness=DEFAULT_BOX_THICKNESS)
+    res = draw_boxes(res, final_boxes, color=DEFAULT_BOX_COLOR, thickness=DEFAULT_BOX_THICKNESS)
 
     return res
 
@@ -73,8 +70,10 @@ if __name__ == '__main__':
     with open('scaler.pkl', 'rb') as fid:
         X_scaler = pickle.load(fid)
 
+    queue = BoxQueue(NUM_FRAMES)
+
     print('Processing video...')
     for idx, img in enumerate(clip.iter_frames()):
         progress(idx+1, frames)
-        draw_img = process_image(img)
+        draw_img = process_image(img, queue, WINDOWS, 3, clf, X_scaler)
         mpimg.imsave('frames/test{}_detections.png'.format(idx+1), draw_img)
