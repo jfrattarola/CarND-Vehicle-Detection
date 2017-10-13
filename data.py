@@ -2,7 +2,7 @@ from parameters import *
 from features import extract_features
 import glob, os
 import numpy as np
-from sklearn.utils import shuffle
+from sklearn.preprocessing import StandardScaler
 import argparse
 
 def extract_data(path='.'):
@@ -17,35 +17,28 @@ def extract_data(path='.'):
         print('Loading files from {}/'.format(path))
         cars = glob.glob('{}/vehicles/**/*.png'.format(path))
         non_cars = glob.glob('{}/non-vehicles/**/*.png'.format(path))
-
-        # Compute features and labels for training data
-        car_features = None
-        non_car_features = None
-        cars_len = len(cars)
-        non_cars_len = len(non_cars)
-        y = np.concatenate([np.ones(cars_len, dtype=np.int), np.zeros(non_cars_len, dtype=np.int)])
+        print ('extracting features for {} cars'.format(len(cars)))
+        car_features = extract_features_imgs(cars, color_space=COLOR_SPACE,
+                                             spatial_size=SPATIAL_SIZE, hist_bins=HIST_BINS, 
+                                             orient=ORIENT, pix_per_cell=PIX_PER_CELL, 
+                                             cell_per_block=CELL_PER_BLOCK, 
+                                             hog_channel=HOG_CHANNEL, spatial_feat=SPATIAL_FEAT, 
+                                             hist_feat=HIST_FEAT, hog_feat=HOG_FEAT)
+        print ('extracting features for {} non-cars'.format(len(non_cars)))
+        non_car_features = extract_features_imgs(non_cars, color_space=COLOR_SPACE,
+                                                 spatial_size=SPATIAL_SIZE, hist_bins=HIST_BINS, 
+                                                 orient=ORIENT, pix_per_cell=PIX_PER_CELL, 
+                                                 cell_per_block=CELL_PER_BLOCK, 
+                                                 hog_channel=HOG_CHANNEL, spatial_feat=SPATIAL_FEAT, 
+                                                 hist_feat=HIST_FEAT, hog_feat=HOG_FEAT)
         
-        print ('extracting features for {} cars'.format(cars_len))
-        car_features = extract_features(cars)
-
-        print ('extracting features for {} non-cars'.format(non_cars_len))
-        non_car_features = extract_features(non_cars)
-
-        car_features = np.asarray(car_features)
-        non_car_features = np.asarray(non_car_features)
-
-        X = np.squeeze(np.concatenate((car_features, non_car_features)))
-
-        # Shuffle features and labels in a consistent way
-        X, y = shuffle(X, y)
-
-        # Split training and test data
-        train_portion = 0.75
-        tot_training_samples = int(len(X) * train_portion)
-        X_train = X[:tot_training_samples]
-        y_train = y[:tot_training_samples]
-        X_test = X[tot_training_samples:]
-        y_test = y[tot_training_samples:]
+        X = np.vstack((car_features, notcar_features)).astype(np.float64)
+        X_scaler = StandardScaler().fit(X)
+        scaled_X = X_scaler.transform(X)
+        y = np.hstack((np.ones(len(car_features), dtype=np.int), np.zeros(len(non_car_features), dtype=np.int)))
+        
+        rand_state = np.random.randint(0, 100)
+        X_train, X_test, y_train, y_test = train_test_split(scaled_X, y, test_size=0.25, random_state=rand_state)
 
         np.save('X_train.npy', X_train)
         np.save('y_train.npy', y_train)
@@ -56,11 +49,11 @@ def extract_data(path='.'):
     print('Number of test samples: {}'.format(X_test.shape[0]))
     print('Number of positive samples: {}'.format(np.sum(y_test) + np.sum(y_train)))
 
-    return X_train, y_train, X_test, y_test
+    return X_train, y_train, X_test, y_test, X_scaler
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--dir', type=str, default='.',
                         help='directory to read vehicle/non-vehicle image files from')
     FLAGS, unparsed = parser.parse_known_args()
-    X_train, y_train, X_test, y_test = extract_data(FLAGS.dir)
+    X_train, y_train, X_test, y_test, _ = extract_data(FLAGS.dir)
