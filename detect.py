@@ -7,9 +7,9 @@ import pickle
 import cv2
 from scipy.ndimage.measurements import label
 from sliding import find_cars
-from heat import *
 import glob
 import sys
+import argparse
 
 def progress(count, total, suffix=''):
     bar_len = 60
@@ -21,8 +21,45 @@ def progress(count, total, suffix=''):
     sys.stdout.write('[{}] {}{} ...{}\r'.format(bar, percents, '%', suffix))
     sys.stdout.flush()
 
+class BoxQueue ():
+    def __init__ (self, maxlen=12):
+        self.maxlen = maxlen
+        self.bboxes = []
+
+    def put(self, bboxes):
+        if (len(self.boxes) > self.maxlen):
+            self.boxes.pop(0)
+        self.bboxes.append(bboxes)
+        
+    def get(self):
+        res = []
+        for bboxes in self.bboxes:
+            res.extend(bboxes)
+        return res
+
+queue = BoxQueue(NUM_FRAMES)
+    
+def process_image (image):
+    
+    res = np.copy (image)
+    res = res.astype(np.float32)/255
+    
+    bboxes, image_bboxes = get_bboxes (image)
+    queue.put(bboxes)
+    bboxes = queue.get()
+    
+    final_boxes = get_final_boxes (bboxes, NUM_FRAMES*2)
+    res = 255 * draw_boxes(res, final_boxes, color=DEFAULT_BOX_COLOR, thickness=DEFAULT_BOX_THICKNESS)
+
+    return res
+
 if __name__ == '__main__':
-    clip = VideoFileClip("project_video.mp4")
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--video', type=str, default='project_video.mp4',
+                        help='video file to use')
+    FLAGS, unparsed = parser.parse_known_args()
+
+    clip = VideoFileClip(FLAGS.video)
     frames = int(clip.fps * clip.duration)
     image_folder = "frames/"
     video_file = 'processed_video.mp4'
@@ -39,22 +76,5 @@ if __name__ == '__main__':
     print('Processing video...')
     for idx, img in enumerate(clip.iter_frames()):
         progress(idx+1, frames)
-        _, box_list = find_cars(img, YSTART, YSTOP, SCALES, clf, X_scaler, orient, PIX_PER_CELL, CELL_PER_BLOCK, SPATIAL_SIZE, HIST_BINS, COLOR_SPACE)
-
-        if idx == 0:
-            heat = np.zeros_like(img[:,:,0]).astype(np.float)
-        # Add heat to each box in box list
-        heat = add_heat(heat, box_list)
-        heat = remove_old_heat(heat)
-
-        # Apply threshold to help remove false positives
-        heat = apply_threshold(heat, THRESHOLD)
-
-        # Visualize the heatmap when displaying
-        heatmap = np.clip(heat, 0, 255)
-
-        # Find final boxes from heatmap using label function
-        labels = label(heatmap)
-
-        draw_img = draw_labeled_bboxes(np.copy(img), labels)
+        draw_img = process_image(img)
         mpimg.imsave('frames/test{}_detections.png'.format(idx+1), draw_img)
