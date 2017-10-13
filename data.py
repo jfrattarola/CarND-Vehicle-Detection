@@ -1,8 +1,9 @@
 from parameters import *
-from features import extract_features
+from features import extract_features_imgs
 import glob, os
 import numpy as np
 from sklearn.preprocessing import StandardScaler
+import pickle
 import argparse
 
 def extract_data(path='.'):
@@ -12,7 +13,8 @@ def extract_data(path='.'):
         y_train = np.load('y_train.npy')
         X_test = np.load('X_test.npy')
         y_test = np.load('y_test.npy')
-
+        with open('scaler.pkl', 'rb') as fid:
+            X_scaler = pickle.load(fid)
     else:
         print('Loading files from {}/'.format(path))
         cars = glob.glob('{}/vehicles/**/*.png'.format(path))
@@ -32,7 +34,7 @@ def extract_data(path='.'):
                                                  hog_channel=HOG_CHANNEL, spatial_feat=SPATIAL_FEAT, 
                                                  hist_feat=HIST_FEAT, hog_feat=HOG_FEAT)
         
-        X = np.vstack((car_features, notcar_features)).astype(np.float64)
+        X = np.vstack((car_features, non_car_features)).astype(np.float64)
         X_scaler = StandardScaler().fit(X)
         scaled_X = X_scaler.transform(X)
         y = np.hstack((np.ones(len(car_features), dtype=np.int), np.zeros(len(non_car_features), dtype=np.int)))

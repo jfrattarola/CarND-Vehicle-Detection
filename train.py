@@ -1,3 +1,4 @@
+import time
 import numpy as np
 from data import extract_data
 from sklearn import model_selection

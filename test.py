@@ -19,20 +19,20 @@ if __name__ == '__main__':
                         help='non-car image')
     FLAGS, unparsed = parser.parse_known_args()
 
-    features_car = extract_features([FLAGS.car])
-    features_noncar = extract_features([FLAGS.non])
+#    features_car = extract_features([FLAGS.car])
+#    features_noncar = extract_features([FLAGS.non])
 
-    features_car_scaled = X_scaler.transform(features_car)
-    features_noncar_scaled = X_scaler.transform(features_noncar)
+#    features_car_scaled = X_scaler.transform(features_car)
+#    features_noncar_scaled = X_scaler.transform(features_noncar)
 
-    prediction = clf.predict(features_car_scaled)
-    if prediction == 1:
-        print('Correct prediction of Car')
-    else: print('Incorrect prediction of Car')
-    prediction = clf.predict(features_noncar_scaled)
-    if prediction == 0:
-        print('Correct prediction of Non-Car')
-    else: print('Incorrect prediction of Non-Car')
+#    prediction = clf.predict(features_car_scaled)
+#    if prediction == 1:
+#        print('Correct prediction of Car')
+#    else: print('Incorrect prediction of Car')
+#    prediction = clf.predict(features_noncar_scaled)
+#    if prediction == 0:
+#        print('Correct prediction of Non-Car')
+#    else: print('Incorrect prediction of Non-Car')
 
     X_train, y_train, X_test, y_test = extract_data()
     scaled_X_test = X_scaler.transform(X_test)
