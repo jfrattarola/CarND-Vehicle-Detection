@@ -63,7 +63,7 @@ def extract_features(imgs,
         image = mpimg.imread(file)
         # apply color conversion if other than 'RGB'
         feature_image = convert_color(image, color_space)
-        feature_ch = feature_image[:,:,0]
+        feature_ch = feature_image[:,:,HOG_CHANNEL]
         
         #spatial features
         spatial_features = bin_spatial(feature_image, size=spatial_size)
