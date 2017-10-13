@@ -7,14 +7,6 @@ import cv2
 import glob
 
 def show_images_in_table (images, table_size, fig_size = (10, 10), cmap=None, titles=None):
-    """Shows images in table
-    Args:
-        images (list): list of input images
-        table_size (tuple): (cols count, rows count)
-        fig_size (tuple): picture (size x, size y) in inches
-        cmap (list): list of cmap parameters for each image
-        titles (list): list of images titles
-    """
     sizex = table_size [0]
     sizey = table_size [1]
     fig, imtable = plt.subplots (sizey, sizex, figsize = fig_size, squeeze=False)
@@ -36,19 +28,11 @@ def show_images_in_table (images, table_size, fig_size = (10, 10), cmap=None, ti
     plt.show ()
 
 def plt_show_gray (image):
-    """Shows gray image
-    Args:
-        image: image to show
-    """
     plt.figure ()
     plt.imshow (image, cmap='gray')
     plt.show ()
 
 def plt_show (image):
-    """Shows color image in RGB format
-    Args:
-        image: image to show
-    """
     plt.figure ()
     plt.imshow (image)
     plt.show ()
