@@ -15,10 +15,10 @@ def progress(count, total, suffix=''):
     sys.stdout.flush()
 
 image_folder = "frames/"
-video_file = 'processed_video.avi'
-writer = cv2.VideoWriter("{}".format(video_file), cv2.VideoWriter_fourcc(*"MJPG"), 25., (1280,720))
+video_file = 'processed_video.mp4'
+writer = cv2.VideoWriter("{}".format(video_file), cv2.VideoWriter_fourcc(*"MP4V"), 25., (1280,720))
 
-images = glob.glob('{}*png'.format(image_folder))
+images = glob.glob('{}*jpg'.format(image_folder))
 print('converting images to video..')
 for idx, image in enumerate(sorted(images)):
     progress(idx+1, len(images))
