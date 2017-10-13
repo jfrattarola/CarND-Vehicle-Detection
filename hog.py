@@ -18,16 +18,16 @@ if __name__ == '__main__':
     ch1_car = car_img[:, :, 0]
     ch2_car = car_img[:, :, 1]
     ch3_car = car_img[:, :, 2]
-    car_features1, car_hog_image1 = get_hog_features(ch1_car, vis=True)
-    car_features2, car_hog_image2 = get_hog_features(ch2_car, vis=True)
-    car_features3, car_hog_image3 = get_hog_features(ch3_car, vis=True)
+    car_features1, car_hog_image1 = get_hog_features(ch1_car, ORIENT, PIX_PER_CELL, CELL_PER_BLOCK, vis=True)
+    car_features2, car_hog_image2 = get_hog_features(ch2_car, ORIENT, PIX_PER_CELL, CELL_PER_BLOCK, vis=True)
+    car_features3, car_hog_image3 = get_hog_features(ch3_car, ORIENT, PIX_PER_CELL, CELL_PER_BLOCK, vis=True)
 
     ch1_noncar = cvt_noncar_img[:, :, 0]
     ch2_noncar = cvt_noncar_img[:, :, 1]
     ch3_noncar = cvt_noncar_img[:, :, 2]
-    noncar_features1, non_car_hog_image1 = get_hog_features(ch1_noncar, vis=True)
-    noncar_features2, non_car_hog_image2 = get_hog_features(ch2_noncar, vis=True)
-    noncar_features3, non_car_hog_image3 = get_hog_features(ch3_noncar, vis=True)
+    noncar_features1, non_car_hog_image1 = get_hog_features(ch1_noncar, ORIENT, PIX_PER_CELL, CELL_PER_BLOCK, vis=True)
+    noncar_features2, non_car_hog_image2 = get_hog_features(ch2_noncar, ORIENT, PIX_PER_CELL, CELL_PER_BLOCK, vis=True)
+    noncar_features3, non_car_hog_image3 = get_hog_features(ch3_noncar, ORIENT, PIX_PER_CELL, CELL_PER_BLOCK, vis=True)
 
     print('car_features1 {}'.format(car_features1.shape))
     print('car_features2 {}'.format(car_features2.shape))
