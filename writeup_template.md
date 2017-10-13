@@ -1,4 +1,5 @@
 **Vehicle Detection Project**
+I reused a lot of the code from the lessons, as I already coded them and it was my own work.
 
 The goals / steps of this project are the following:
 
