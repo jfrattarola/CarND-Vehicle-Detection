@@ -16,13 +16,6 @@ The goals / steps of this project are the following:
 [search_sliding]: ./examples/search_sliding.png
 [train] ./examples/train.png
 
-### Discussion
-
-#### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
-I want to start with the discussion.  This project took me many hours to complete...and I actually completed it twice. First, I followed the guidelines from the lessons.  That produced high test accuracy from my classifier, but I couldn't get the boxes to be accurate on moving images no matter what.
-After doing a bunch of research and discussing with other classmates, I decided that the main problems were caused by my feature sets. Color saturation was messing with it, so I used grayscale for HOG extraction since this would retain the structural information. I also reduced my orient size to 8 and cell per block to only 1. I didn't use spatial bins or color histograms at all.  My predictions processed much faster and I was able to accurately draw boxes on moving images
-
-
 ## [Rubric](https://review.udacity.com/#!/rubrics/513/view) Points
 ### Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
 
@@ -129,4 +122,13 @@ I also kept a queue of 10 most current frames, using overlapping boxes to determ
 
 
 ---
+
+### Discussion
+
+#### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
+I want to start with the discussion.  This project took me many hours to complete...and I actually completed it twice. First, I followed the guidelines from the lessons.  That produced high test accuracy from my classifier, but I couldn't get the boxes to be accurate on moving images no matter what.
+After doing a bunch of research and discussing with other classmates, I decided that the main problems were caused by my feature sets. Color saturation was messing with it, so I used grayscale for HOG extraction since this would retain the structural information. I also reduced my orient size to 8 and cell per block to only 1. I didn't use spatial bins or color histograms at all.  My predictions processed much faster and I was able to accurately draw boxes on moving images
+
+
+
 
