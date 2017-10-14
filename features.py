@@ -66,14 +66,15 @@ def extract_features_img(img,
                          hog_channel=HOG_CHANNEL,
                          spatial_size=SPATIAL_SIZE,
                          hist_bins=HIST_BINS,
-                         spatial_feat=True,
-                         hist_feat=True,
-                         hog_feat=True):
+                         spatial_feat=SPATIAL_FEAT,
+                         hist_feat=HIST_FEAT,
+                         hog_feat=HOG_FEAT):
     features=[]
     feature_img = convert_color(img, color_space)
     
     if spatial_feat is True:
-        spatial_features = bin_spatial( feature_img, size=spatial_size)
+        simg = convert_color(img, "YUV")
+        spatial_features = bin_spatial( simg, size=spatial_size)
         features.append(spatial_features)
 
     if hist_feat is True:
@@ -104,9 +105,9 @@ def extract_features_imgs(imgs,
                           hog_channel=HOG_CHANNEL,
                           spatial_size=SPATIAL_SIZE,
                           hist_bins=HIST_BINS,
-                          spatial_feat=True,
-                          hist_feat=True,
-                          hog_feat=True):
+                          spatial_feat=SPATIAL_FEAT,
+                          hist_feat=HIST_FEAT,
+                          hog_feat=HOG_FEAT):
     # Create a list to append feature vectors to
     features = [] 
     # Iterate through the list of images

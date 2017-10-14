@@ -45,7 +45,7 @@ def process_image (image, queue, settings, num, clf, X_scaler):
     queue.put(bboxes)
     bboxes = queue.get()
     
-    final_boxes = get_final_boxes (bboxes, NUM_FRAMES*2)
+    final_boxes = get_final_boxes (bboxes, NUM_FRAMES*2.5)
     res = draw_boxes(res, final_boxes, color=DEFAULT_BOX_COLOR, thickness=DEFAULT_BOX_THICKNESS)
 
     return res
