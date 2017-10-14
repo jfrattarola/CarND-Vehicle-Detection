@@ -5,6 +5,7 @@ import matplotlib.image as mpimg
 import numpy as np
 import pickle
 import cv2
+from scipy.ndimage.measurements import label
 from search_sliding import search, slide
 import glob
 

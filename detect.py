@@ -5,8 +5,8 @@ import matplotlib.image as mpimg
 import numpy as np
 import pickle
 import cv2
-from scipy.ndimage.measurements import label
 from heat import *
+from search_sliding import *
 import glob
 import sys
 import argparse
@@ -54,17 +54,21 @@ class Detector():
 
     def add(self, bboxes):
         if len(bboxes) > 0:
-            self.prev.append(bboxes)
+            self.prev.extend(bboxes)
             l = len(self.prev)
-            if l > self.maxlen:
-                self.prev = self.prev[l-self.maxlen]
+            while(l > self.maxlen):
+                self.prev.pop(0)# = self.prev[l-self.maxlen]
+                l-=1
         
     def process_image (self, image, settings, num, clf, X_scaler):
         bboxes, _ = get_bboxes (image, settings, num, clf, X_scaler)
         self.add(bboxes)
         heatmap_image = np.zeros_like(image[:,:,0])
         for bbox in self.prev:
-            heatmap_image = add_heat(heatmap_image, bbox)
+            try :
+                heatmap_image[bbox[0][1]:bbox[1][1], bbox[0][0]:bbox[1][0]] += 1
+            except:
+                print("ERROR: {}".format(bbox))
         heatmap_image, labels = threshold_and_label(heatmap_image, 1 + len(self.prev)//2)
         draw_image, _ = draw_labeled_bboxes(np.copy(image), labels)
         return draw_image

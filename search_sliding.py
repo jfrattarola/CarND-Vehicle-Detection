@@ -48,8 +48,8 @@ def slide(img, xview=[None, None], yview=[None, None], window_size=(64,64), over
     windows = []
     for y in range(nysteps):
         for x in range(nxsteps):
-            xleft = xview[0] + x*stepx
-            ytop = yview[0] + y*stepy
+            xleft = int(xview[0] + x*stepx)
+            ytop = int(yview[0] + y*stepy)
             window = ((xleft, ytop), (xleft + window_size[1], ytop + window_size[0]))
             windows.append(window)
     return windows
@@ -60,14 +60,14 @@ def draw_boxes( img, bboxes, color=DEFAULT_BOX_COLOR, thickness=DEFAULT_BOX_THIC
         cv2.rectangle(imcopy, bbox[0], bbox[1], color, thickness)
     return imcopy
 
-def draw_labeled_boxes( img, labels, color=DEFAULT_BOX_COLOR, thickness=DEFAULT_BOX_THICKNESS):
+def draw_labeled_bboxes( img, labels, color=DEFAULT_BOX_COLOR, thickness=DEFAULT_BOX_THICKNESS):
     bboxes = []
     for car in range(1, labels[1]+1):
-        nonzero = (labels[0] == car_number).nonzero()
+        nonzero = (labels[0] == car).nonzero()
         nonzeroy = np.array(nonzero[0])
         nonzerox = np.array(nonzero[1])
         bbox = ((np.min(nonzerox), np.min(nonzeroy)), (np.max(nonzerox), np.max(nonzeroy)))
-        bboxess.append(bbox)
+        bboxes.append(bbox)
         cv2.rectangle(img, bbox[0], bbox[1], color, thickness)
     return img, bboxes
 
