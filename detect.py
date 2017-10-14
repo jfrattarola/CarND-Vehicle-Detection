@@ -98,7 +98,9 @@ if __name__ == '__main__':
 
     print('Processing video...')
     for idx, img in enumerate(clip.iter_frames()):
+        if idx == 0:
+            apply_scales(img)
         progress(idx+1, frames)
-#        draw_img = queue.process_image(img, WINDOWS, 3, clf, X_scaler)
-        draw_img = detector.process_image(img, WINDOWS, 3, clf, X_scaler)
+#        draw_img = queue.process_image(img, WINDOWS, NUM_WINDOWS, clf, X_scaler)
+        draw_img = detector.process_image(img, WINDOWS, NUM_WINDOWS, clf, X_scaler)
         mpimg.imsave('frames/test{:04d}_detections.png'.format(idx+1), draw_img)

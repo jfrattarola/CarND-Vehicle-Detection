@@ -17,21 +17,22 @@ def search( img, windows, clf, X_scaler, color_space=COLOR_SPACE,
             hist_feat=HIST_FEAT, hog_feat=HOG_FEAT):
     positives=[]
     for window in windows:
-        img_tosearch = cv2.resize(img[window[0][1]:window[1][1], window[0][0]:window[1][0]], 
-                                  (64,64), interpolation=cv2.INTER_AREA)
-        features = extract_features_img(img_tosearch, color_space=color_space, 
+        img = cv2.resize(img[window[0][1]:window[1][1], window[0][0]:window[1][0]], 
+                         (64, 64), interpolation=cv2.INTER_AREA)
+        features = extract_features_img(img, color_space=color_space, 
                                         spatial_size=spatial_size, hist_bins=hist_bins, 
                                         orient=orient, pix_per_cell=pix_per_cell, 
                                         cell_per_block=cell_per_block, 
                                         hog_channel=hog_channel, spatial_feat=spatial_feat, 
                                         hist_feat=hist_feat, hog_feat=hog_feat)
-        test_features = X_scaler.transform(np.array(features).reshape(1, -1))        
+        test_features = features.reshape(1,-1) #X_scaler.transform(np.array(features).reshape(1, -1))        
         pred = clf.predict(test_features)
         if pred == 1:
             positives.append(window)
     return positives
 
-        
+
+
 # Define a single function that can extract features using hog sub-sampling and make predictions
 def slide(img, xview=[None, None], yview=[None, None], window_size=(64,64), overlap=(0.5, 0.5)):
     imshape = img.shape
@@ -71,11 +72,10 @@ def draw_labeled_bboxes( img, labels, color=DEFAULT_BOX_COLOR, thickness=DEFAULT
         cv2.rectangle(img, bbox[0], bbox[1], color, thickness)
     return img, bboxes
 
-def get_windows(image, xviews=WINDOWS['x_limit'], yviews=WINDOWS['y_limit'], window_sizes=WINDOWS['size'], overlaps=WINDOWS['overlap']):
+def get_windows(image, xviews=WINDOWS['x_limit'], yviews=WINDOWS['y_limit'], window_sizes=WINDOWS['size'], overlaps=WINDOWS['overlap'], num_windows=NUM_WINDOWS):
     windows=[]
-    windows.append(slide(image, xview=xviews[0], yview=yviews[0], window_size=window_sizes[0], overlap=overlaps[0]))
-    windows.append(slide(image, xview=xviews[1], yview=yviews[1], window_size=window_sizes[1], overlap=overlaps[1]))
-    windows.append(slide(image, xview=xviews[2], yview=yviews[2], window_size=window_sizes[2], overlap=overlaps[2]))
+    for i in range(NUM_WINDOWS):
+        windows.append(slide(image, xview=xviews[i], yview=yviews[i], window_size=window_sizes[i], overlap=overlaps[i]))
     return windows
 
 if __name__ == '__main__':

@@ -33,8 +33,9 @@ def get_bboxes(img, settings, num, clf, X_scaler, color_space=COLOR_SPACE,
     bboxes=[]
 
     for i in range(num):
+        img_to_search = img ##cv2.resize(img[settings['y_limit'][i][0]:settings['y_limit'][i][1],:,:], settings['size'][i])
         windows = slide(res_img, settings['x_limit'][i], settings['y_limit'][i], settings['size'][i], settings['overlap'][i])
-        hot = search(img, windows, clf, X_scaler, color_space, spatial_size, hist_bins, hist_range, orient, pix_per_cell, cell_per_block, hog_channel, spatial_feat, hist_feat, hog_feat)
+        hot = search(img_to_search, windows, clf, X_scaler, color_space, spatial_size, hist_bins, hist_range, orient, pix_per_cell, cell_per_block, hog_channel, spatial_feat, hist_feat, hog_feat)
         bboxes.extend(hot)
         res_img = draw_boxes(res_img, hot, color=(150,0,150), thickness=4)
 
@@ -126,7 +127,7 @@ if __name__ == '__main__':
     for im in images:
         image = mpimg.imread(im)
 
-        bboxes, bbox_img = get_bboxes(image, WINDOWS, 3, clf, X_scaler)
+        bboxes, bbox_img = get_bboxes(image, WINDOWS, NUM_WINDOWS, clf, X_scaler)
         test_images.append(bbox_img)
 
         heatmap = get_heatmap(bbox_img, bboxes)
