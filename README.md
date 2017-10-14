@@ -44,11 +44,11 @@ Here is an example using the `GRAY` color space and HOG parameters of `orientati
 
 I tried various combinations of parameters and finally decided to use grayscale and minimal hog parameters for slight influence. Here is a list of all the parameters/configurations I used:
 ```
-COLOR_SPACE='GRAY'
+COLOR_SPACE='YUV'
 HOG_CHANNEL='ALL'
-ORIENT=8
+ORIENT=11
 PIX_PER_CELL=16
-CELL_PER_BLOCK=1
+CELL_PER_BLOCK=2
 SPATIAL_SIZE=(16, 16)
 HIST_BINS=16
 BINS_RANGE=(0,1)
@@ -129,6 +129,6 @@ I also kept a queue of 10 most current frames, using overlapping boxes to determ
 I want to start with the discussion.  This project took me many hours to complete...and I actually completed it twice. First, I followed the guidelines from the lessons.  That produced high test accuracy from my classifier, but I couldn't get the boxes to be accurate on moving images no matter what.
 After doing a bunch of research and discussing with other classmates, I decided that the main problems were caused by my feature sets. Color saturation was messing with it, so I used grayscale for HOG extraction since this would retain the structural information. I also reduced my orient size to 8 and cell per block to only 1. I didn't use spatial bins or color histograms at all.  My predictions processed much faster and I was able to accurately draw boxes on moving images
 
-
+My first attempt did not pass, so on my second attempt I took some tips from the reviewer, used the YUV color space, changed the orient and cell space params and ditched my Box class for the label heatmap approach given in the lessons.
 
 
