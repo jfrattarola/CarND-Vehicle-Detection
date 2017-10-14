@@ -56,10 +56,10 @@ if __name__ == '__main__':
                         help='video file to use')
     FLAGS, unparsed = parser.parse_known_args()
 
+    print('Will detect cars from video {}'.format(FLAGS.video))
     clip = VideoFileClip(FLAGS.video)
     frames = int(clip.fps * clip.duration)
     image_folder = "frames/"
-    video_file = 'processed_video.mp4'
 
     # load classifier
     print('Loading Classifier')
