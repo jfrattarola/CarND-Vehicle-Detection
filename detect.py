@@ -76,4 +76,4 @@ if __name__ == '__main__':
     for idx, img in enumerate(clip.iter_frames()):
         progress(idx+1, frames)
         draw_img = process_image(img, queue, WINDOWS, 3, clf, X_scaler)
-        mpimg.imsave('frames/test{}_detections.png'.format(idx+1), draw_img)
+        mpimg.imsave('frames/test{:04d}_detections.png'.format(idx+1), draw_img)

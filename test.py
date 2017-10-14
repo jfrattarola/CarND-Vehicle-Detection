@@ -1,6 +1,6 @@
 import pickle
 import matplotlib.image as mpimg
-from features import extract_features
+from features import extract_features_imgs
 from data import extract_data
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import classification_report

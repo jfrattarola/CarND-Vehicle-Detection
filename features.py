@@ -81,6 +81,7 @@ def extract_features_img(img,
         features.append(hist_features)
 
     if hog_feat is True:
+        hog_features=[]
         if color_space == 'GRAY' or color_space == 'GREY':
             if len(feature_img.shape) == 3:
                 feature_img = cv2.cvtColor(feature_img, cv2.COLOR_RGB2GRAY)
