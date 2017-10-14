@@ -49,23 +49,61 @@ Here is an example using the `GRAY` color space and HOG parameters of `orientati
 
 #### 2. Explain how you settled on your final choice of HOG parameters.
 
-I tried various combinations of parameters and finally decided to use grayscale and minimal hog parameters for slight influence.
+I tried various combinations of parameters and finally decided to use grayscale and minimal hog parameters for slight influence. Here is a list of all the parameters/configurations I used:
+```
+COLOR_SPACE='GRAY'
+HOG_CHANNEL='ALL'
+ORIENT=8
+PIX_PER_CELL=16
+CELL_PER_BLOCK=1
+SPATIAL_SIZE=(16, 16)
+HIST_BINS=16
+BINS_RANGE=(0,1)
+YSTART = 400
+YSTOP = 650
+THRESHOLD=5
+DEFAULT_BOX_COLOR=(0,0,255)
+DEFAULT_BOX_THICKNESS=6
+SPATIAL_FEAT=False
+HIST_FEAT=False
+HOG_FEAT=True
+WINDOWS={}
+WINDOWS['x_limit']= [[None, None], [32, None], [412, 1280]]
+WINDOWS['y_limit'] = [[400,640], [400,600], [390,540]]
+WINDOWS['size'] = [(128,128), (96,96), (80,80)]
+WINDOWS['overlap'] = [(0.5,0.5), (0.5,0.5), (0.5,0.5)]
+NUM_FRAMES=10
+```
 
 #### 3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
-I trained a linear SVM using hog features
+I trained a linear SVM with the default rbf and kernel paramters from sklearn. This code is in `train.py` and `test.py`. It uses `data.py` to gather training data. I used 25% for testing. I also used the StandardScaler.  My classifier got 99.1% accuracy
+
+```
+python train.py --dir=/vol/data
+Loading files from /vol/data/
+extracting features for 8792 cars
+extracting features for 8968 non-cars
+
+Number of training samples: 13320
+Number of test samples: 4440
+Number of positive samples: 8792
+Training took 4.837543725967407 seconds and produced an accuracy of 0.991
+```
 
 ### Sliding Window Search
 
 #### 1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
 
-I trained using three window scales: 128x128, 96x96 and 80x80
+I trained using three window scales: 128x128, 96x96 and 80x80 with 50% overlapping while sliding. I also only look at the x/y coordinates where cars should be.
+
+In this image, you can see the search area for each window area, and the size of a sliding window.
 
 ![alt text][search_sliding]
 
 #### 2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
-I first converted the image to GREY color space and hog features. I applied a StandardScaler to the feature values, though probably not necessary since I didn't use spatial bins or histograms. I use a heatmap to help with false detection and merged overlapping boxes
+I first converted the image to GREY color space and hog features.  I use a heatmap to help with false detection and merged overlapping boxes
 
 ![][heat]
 
@@ -74,7 +112,10 @@ I first converted the image to GREY color space and hog features. I applied a St
 ### Video Implementation
 
 #### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (somewhat wobbly or unstable bounding boxes are ok as long as you are identifying the vehicles most of the time with minimal false positives.)
-Here's a [link to my video result](./final_video.mp4)
+Here's a [link to my video result](./final_video.m4v)
+
+[![Vehicle detection and tracking](http://img.youtube.com/vi/xBobUUFdofo/0.jpg)](https://www.youtube.com/watch?v=xBobUUFdofo)
+
 
 
 #### 2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
