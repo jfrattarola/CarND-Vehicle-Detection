@@ -37,19 +37,38 @@ class BoxQueue ():
             res.extend(bboxes)
         return res
     
-def process_image (image, queue, settings, num, clf, X_scaler):
+    def process_image (self, image, settings, num, clf, X_scaler):
+        bboxes, _ = get_bboxes (image, settings, num, clf, X_scaler)
+        self.put(bboxes)
+        bboxes = self.get()
     
-    res = np.copy (image)
-    
-    bboxes, image_bboxes = get_bboxes (image, settings, num, clf, X_scaler)
-    queue.put(bboxes)
-    bboxes = queue.get()
-    
-    final_boxes = get_final_boxes (bboxes, NUM_FRAMES*2.5)
-    res = draw_boxes(res, final_boxes, color=DEFAULT_BOX_COLOR, thickness=DEFAULT_BOX_THICKNESS)
+        final_boxes = get_final_boxes (bboxes, NUM_FRAMES*2.5)
+        res = draw_boxes(res, final_boxes, color=DEFAULT_BOX_COLOR, thickness=DEFAULT_BOX_THICKNESS)
+        
+        return res
 
-    return res
+class Detector():
+    def __init__(self, maxlen=15):
+        self.prev=[]
+        self.maxlen = maxlen
 
+    def add(self, bboxes):
+        if len(bboxes) > 0:
+            self.prev.append(bboxes)
+            l = len(self.prev)
+            if l > self.maxlen:
+                self.prev = self.prev[l-self.maxlen]
+        
+    def process_image (self, image, settings, num, clf, X_scaler):
+        bboxes, _ = get_bboxes (image, settings, num, clf, X_scaler)
+        self.add(bboxes)
+        heatmap_image = np.zeros_like(image[:,:,0])
+        for bbox in self.prev:
+            heatmap_image = add_heat(heatmap_image, bbox)
+        heatmap_image, labels = threshold_and_label(heatmap_image, 1 + len(self.prev)//2)
+        draw_image, _ = draw_labeled_bboxes(np.copy(image), labels)
+        return draw_image
+            
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--video', type=str, default='project_video.mp4',
@@ -70,10 +89,12 @@ if __name__ == '__main__':
     with open('scaler.pkl', 'rb') as fid:
         X_scaler = pickle.load(fid)
 
-    queue = BoxQueue(NUM_FRAMES)
+#    queue = BoxQueue(NUM_FRAMES)
+    detector = Detector(NUM_FRAMES)
 
     print('Processing video...')
     for idx, img in enumerate(clip.iter_frames()):
         progress(idx+1, frames)
-        draw_img = process_image(img, queue, WINDOWS, 3, clf, X_scaler)
+#        draw_img = queue.process_image(img, WINDOWS, 3, clf, X_scaler)
+        draw_img = detector.process_image(img, WINDOWS, 3, clf, X_scaler)
         mpimg.imsave('frames/test{:04d}_detections.png'.format(idx+1), draw_img)

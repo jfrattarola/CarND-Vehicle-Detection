@@ -8,6 +8,20 @@ import cv2
 from search_sliding import search, slide
 import glob
 
+
+def get_heatmap(image, bboxes):
+    heatmap = np.zeros_like(image[:,:,0]).astype(np.float)
+
+    for b in bboxes:
+        heatmap[b[0][1]:b[1][1], b[0][0]:b[1][0]] +=1
+    return heatmap
+
+def threshold_and_label(heatmap, threshold=THRESHOLD):
+    heatmap[heatmap <= THRESHOLD] = 0
+    labels = label(heatmap)
+    return heatmap, labels
+
+
 def get_bboxes(img, settings, num, clf, X_scaler, color_space=COLOR_SPACE, 
                spatial_size=SPATIAL_SIZE, hist_bins=HIST_BINS, 
                hist_range=BINS_RANGE, orient=ORIENT, 
@@ -24,13 +38,6 @@ def get_bboxes(img, settings, num, clf, X_scaler, color_space=COLOR_SPACE,
         res_img = draw_boxes(res_img, hot, color=(150,0,150), thickness=4)
 
     return bboxes, res_img
-
-def get_heatmap(image, bboxes):
-    heatmap = np.zeros_like(image[:,:,0]).astype(np.float)
-
-    for b in bboxes:
-        heatmap[b[0][1]:b[1][1], b[0][0]:b[1][0]] +=1
-    return heatmap
 
 class Box():
     def __init__(self, first_box):

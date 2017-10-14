@@ -19,4 +19,4 @@ WINDOWS['x_limit']= [[None, None], [32, None], [412, 1280]]
 WINDOWS['y_limit'] = [[400,640], [400,600], [390,540]]
 WINDOWS['size'] = [(128,128), (96,96), (64,64)]
 WINDOWS['overlap'] = [(0.5,0.5), (0.4,0.4), (0.3,0.3)]
-NUM_FRAMES=12
+NUM_FRAMES=15

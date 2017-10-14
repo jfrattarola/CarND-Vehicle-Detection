@@ -60,6 +60,16 @@ def draw_boxes( img, bboxes, color=DEFAULT_BOX_COLOR, thickness=DEFAULT_BOX_THIC
         cv2.rectangle(imcopy, bbox[0], bbox[1], color, thickness)
     return imcopy
 
+def draw_labeled_boxes( img, labels, color=DEFAULT_BOX_COLOR, thickness=DEFAULT_BOX_THICKNESS):
+    bboxes = []
+    for car in range(1, labels[1]+1):
+        nonzero = (labels[0] == car_number).nonzero()
+        nonzeroy = np.array(nonzero[0])
+        nonzerox = np.array(nonzero[1])
+        bbox = ((np.min(nonzerox), np.min(nonzeroy)), (np.max(nonzerox), np.max(nonzeroy)))
+        bboxess.append(bbox)
+        cv2.rectangle(img, bbox[0], bbox[1], color, thickness)
+    return img, bboxes
 
 def get_windows(image, xviews=WINDOWS['x_limit'], yviews=WINDOWS['y_limit'], window_sizes=WINDOWS['size'], overlaps=WINDOWS['overlap']):
     windows=[]
