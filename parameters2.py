@@ -22,8 +22,6 @@ WINDOWS['overlap'] = [(0.5,0.5), (0.4,0.4), (0.3,0.3), (0.3,0.3), (0.3,0.3), (0.
 WINDOWS['scale'] = [3.5, 3.5, 2.0, 2.0, 1.5, 1.5, 1.0]
 NUM_WINDOWS=7
 NUM_FRAMES=15
-det=None
-svc=None
 
 def apply_scales(image):
     imshape = image.shape
